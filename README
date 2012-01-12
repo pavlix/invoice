@@ -39,7 +39,7 @@ debugging.
 
 For now an empthy ~/.invoice/config should do.
 
-== Usage
+== Basic usage
 
 Export EDITOR and PDF_VIEWER environment variables to choose your favourite
 text editor and PDF viewer. Defaults are 'vim' and 'xdg-open'.
@@ -58,4 +58,4 @@ invoice delete [<number>]
 
 Generate and display invoice PDF:
 
-invoice show [<number>]
+invoice show --generate [<number>]
