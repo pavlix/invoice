@@ -55,12 +55,14 @@ class Application:
                     suffix = "-companies" if action=="list" else "-company"
                 method = getattr(self, "do_"+(action+suffix).replace("-", "_"))
                 subparser = subparsers.add_parser(action+suffix, help=method.__doc__)
+                if method == self.do_show:
+                    subparser.add_argument("--generate", "-g", action="store_true")
+                if action == "delete":
+                    subparser.add_argument("--force", "-f", action="store_true")
                 if action == "new":
                     subparser.add_argument("name" if suffix else "company_name")
                 if action in ("show", "edit", "delete"):
                     subparser.add_argument("selector", nargs="?")
-                if action == "delete":
-                    subparser.add_argument("--force", "-f", action="store_true")
                 subparser.set_defaults(method=method)
 
         self.args = parser.parse_args()
@@ -106,7 +108,7 @@ class Application:
         assert os.path.exists(path)
         subprocess.call((self.editor, path))
 
-    def do_show(self, selector):
+    def do_show(self, selector, generate):
         """Generate and view a PDF invoice.
         
         This requires Tempita 0.5.
@@ -116,8 +118,6 @@ class Application:
             invoice = self.db.invoices[selector]
         else:
             invoice = self.db.invoices.last()
-        issuer = self.db.companies[self.my_company]
-        customer = self.db.companies[invoice.company_name]
 
         tmp_path = self.tmp_path.format(year=self.year)
         output_path = self.output_path.format(year=self.year)
@@ -128,8 +128,11 @@ class Application:
         tmp_pdf_file = os.path.join(tmp_path, "{}.pdf".format(invoice._name))
         pdf_file = os.path.join(output_path, "{}.pdf".format(invoice._name))
 
-        if (not os.path.exists(pdf_file) or
+        if generate and (not os.path.exists(pdf_file) or
                 os.path.getmtime(invoice._path) > os.path.getmtime(pdf_file)):
+            issuer = self.db.companies[self.my_company]
+            customer = self.db.companies[invoice.company_name]
+
             invoice_data = invoice.data()
             issuer_data = issuer.data()
             customer_data = customer.data()
@@ -153,10 +156,10 @@ class Application:
             log.debug("Moving PDF file to the output directory...")
             self._check_path(output_path)
             os.rename(tmp_pdf_file, pdf_file)
-            assert(os.path.exists(pdf_file))
         else:
             log.info("PDF file is up to date.")
 
+        assert(os.path.exists(pdf_file))
         log.debug("Running PDF viewer...")
         subprocess.call((self.pdf_program, pdf_file))
 
