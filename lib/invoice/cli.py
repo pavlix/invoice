@@ -22,9 +22,9 @@ class Application:
         self.year = self.args.__dict__.pop("year")
         self.user_path = os.path.expanduser(self.args.__dict__.pop("user_data"))
         self.method = self.args.__dict__.pop("method")
-        self.data_path = os.path.join(self.user_path, "data", "{year}", "data", "{directory}")
+        self.data_path = os.path.join(self.user_path, "{year}", "data", "{directory}")
         self.tmp_path = os.path.join(self.user_path, "tmp")
-        self.output_path =  os.path.join(self.user_path, "output", "{year}")
+        self.output_path =  os.path.join(self.user_path, "{year}", "output")
         self.template_path = template_path
         self.db = invoice.db.Database(
             year = self.year,
