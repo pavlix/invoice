@@ -1,0 +1,82 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage{a4wide}
+\usepackage{tabularx}
+\renewcommand{\familydefault}{\sfdefault}
+\setlength{\extrarowheight}{3pt}
+
+\begin{document}
+\footnotesize
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|XXXX|}
+\cline{3-4}
+\multicolumn{2}{X}{} & \multicolumn{2}{|X|}{} \\
+\multicolumn{2}{X}{} & \multicolumn{2}{|l|}{\large Faktura: \hfill {{invoice.number}}} \\
+\multicolumn{2}{X}{} & \multicolumn{2}{|X|}{} \\
+\hline
+& & & \\
+\bf Dodavatel: & & \bf Odběratel & \\[1em]
+\multicolumn{2}{|l}{\large\bf {{issuer.name}}} & \multicolumn{2}{l|}{\large\bf {{customer.name}}} \\
+{{py:
+a1 = issuer.address[:]
+a2 = customer.address[:]
+a1 += (len(a2)-len(a1))*[""]
+a2 += (len(a1)-len(a2))*[""]
+}}
+{{for f1, f2 in zip(a1, a2)}}
+\multicolumn{2}{|l}{\large {{f1}}} & \multicolumn{2}{l|}{\large {{f2}}} \\
+{{endfor}}
+
+& & & \\
+\multicolumn{2}{|l}{IČ: {{issuer.number}}} & \multicolumn{2}{l|}{IČ: {{customer.number}}} \\
+& & & \\
+
+{{py:
+a1 = issuer.comments[:]
+a2 = customer.comments[:]
+a1 += (len(a2)-len(a1))*[""]
+a2 += (len(a1)-len(a2))*[""]
+}}
+{{for f1, f2 in zip(a1, a2)}}
+\multicolumn{2}{|l}{ {{f1}}} & \multicolumn{2}{l|}{ {{f2}}} \\
+{{endfor}}
+
+& & & \\
+\hline
+& & & \\
+\bf Platební podmínky: & & & \\[1em]
+\large Forma úhrady: & \large {{"hotově" if invoice.payment=="cash" else "převodem"}} & \large Datum vystavení: & \multicolumn{1}{r|}{\large {{invoice.date.strftime("%d.%m.%Y")}}} \\
+\large Číslo účtu: & \large {{issuer.bank_account}} & \multicolumn{2}{l|}{\large\bf Datum splatnosti: \hfill {{invoice.due.strftime("%d.%m.%Y")}}} \\
+\large Variabilní symbol: & \large {{invoice.number}} & & \\
+
+{{if invoice.notes}}
+& & & \\
+\hline
+& & & \\
+\bf Poznámky: & & & \\[1em]
+{{for note in invoice.notes}}
+\multicolumn{4}{|l|}{\large {{note}}} \\
+{{endfor}}
+{{endif}}
+
+& & & \\
+\hline
+& & & \\
+\bf Fakturujeme vám: & & & \\[1em]
+
+{{for item in invoice.items}}
+\multicolumn{4}{|l|}{\normalsize {{item[0]}} \hfill {{item[1]}} Kč} \\
+{{endfor}}
+
+& & & \\
+\hline
+& & & \\
+\large\bf Celkem k úhradě: & & & \multicolumn{1}{r|}{\large\bf {{invoice.sum}} Kč} \\
+& & & \\
+\hline
+\end{tabularx}
+\end{center}
+
+\end{document}

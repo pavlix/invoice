@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+
+import os, sys
+base_dir = sys.path[0]
+sys.path[0] = os.path.join(base_dir, "lib")
+
+print(sys.path)
+import invoice.cli
+
+if __name__ == '__main__':
+    invoice.cli.Application(
+        template_path = os.path.join(base_dir, "templates")
+    ).run()
