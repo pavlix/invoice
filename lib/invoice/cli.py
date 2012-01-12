@@ -34,7 +34,7 @@ class Application:
         parser = argparse.ArgumentParser(
             description = "Pavel Šimerda's invoice CLI application.",
             conflict_handler = "resolve")
-        parser.add_argument("--year", "-Y", action="store")
+        parser.add_argument("--year", "-y", action="store")
         parser.add_argument("--user-data", "-d", action="store")
         parser.add_argument("--debug", "-D", action="store_const", dest="log_level", const=logging.DEBUG)
         #parser.add_argument("--verbose", "-v", action="store_const", dest="log_level", const=logging.INFO)
