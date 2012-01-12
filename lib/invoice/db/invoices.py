@@ -13,12 +13,12 @@ class Invoices(List):
     When editing data files, you can use the following
     directives:
 
-    Item -- price, followed by ':' and description
+    Item -- price, followed by ':', optional whitespace and item description
     Due -- Due date YYYY-MM-DD
     Note -- a note at the and of the invoice
     """
     data_template = """\
-Item: 0000: Item summary
+Item: 
 """
     _directory = "income"
     _regex = re.compile("^(?P<date>[0-9]{8})-(?P<number>[0-9]{3})-(?P<company_name>[a-z0-9-]+)$")
