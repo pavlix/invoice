@@ -72,7 +72,7 @@ class List:
         if isinstance(selector, str):
             selector = {"name": selector}
         if isinstance(selector, int):
-            selector = {"number": number}
+            selector = {"number": selector}
         log.debug("Selecting: {}".format(selector))
         assert isinstance(selector, dict)
         return [item for item in self if all(getattr(item, key) == selector[key] for key in selector)]

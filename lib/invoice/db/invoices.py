@@ -30,10 +30,14 @@ Item: 0000: Item summary
     def _select(self, selector):
         if isinstance(selector, str):
             match = self._regex.match(selector)
-            if not match:
-                raise ItemNotFoundError("Item not found: {}".format(selector))
-            selector = match.groupdict()
-            selector["number"] = int(selector["number"])
+            if match:
+                selector = match.groupdict()
+                selector["number"] = int(selector["number"])
+            else:
+                try:
+                    selector = int(selector)
+                except TypeError:
+                    raise ItemNotFoundError("Item not found: {}".format(selector))
         return super(Invoices, self)._select(selector)
 
     def new(self, company_name):
