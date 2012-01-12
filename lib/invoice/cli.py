@@ -119,10 +119,6 @@ class Application:
         issuer = self.db.companies[self.my_company]
         customer = self.db.companies[invoice.company_name]
 
-        invoice_data = invoice.data()
-        issuer_data = issuer.data()
-        customer_data = customer.data()
-
         tmp_path = self.tmp_path.format(year=self.year)
         output_path = self.output_path.format(year=self.year)
         log.debug("tmp_path={}".format(tmp_path))
@@ -132,26 +128,34 @@ class Application:
         tmp_pdf_file = os.path.join(tmp_path, "{}.pdf".format(invoice._name))
         pdf_file = os.path.join(output_path, "{}.pdf".format(invoice._name))
 
-        log.debug("Invoice: {}".format(invoice_data._data))
-        log.debug("Issuer: {}".format(issuer_data._data))
-        log.debug("Customer: {}".format(customer_data._data))
+        if (not os.path.exists(pdf_file) or
+                os.path.getmtime(invoice._path) > os.path.getmtime(pdf_file)):
+            invoice_data = invoice.data()
+            issuer_data = issuer.data()
+            customer_data = customer.data()
 
-        log.debug("Creating TeX invoice...")
-        self._check_path(self.tmp_path)
-        result = tempita.Template(open(tex_template).read()).substitute(
-            invoice=invoice_data, issuer=issuer_data, customer=customer_data)
-        open(tex_file, "w").write(str(result))
-        assert(os.path.exists(tex_file))
+            log.debug("Invoice: {}".format(invoice_data._data))
+            log.debug("Issuer: {}".format(issuer_data._data))
+            log.debug("Customer: {}".format(customer_data._data))
 
-        log.debug("Creating PDF invoice...")
-        if subprocess.call((self.tex_program, "{}.tex".format(invoice._name)), cwd=tmp_path) != 0:
-            raise GenerationError("PDF generation failed.")
-        assert(os.path.exists(tmp_pdf_file))
+            log.debug("Creating TeX invoice...")
+            self._check_path(self.tmp_path)
+            result = tempita.Template(open(tex_template).read()).substitute(
+                invoice=invoice_data, issuer=issuer_data, customer=customer_data)
+            open(tex_file, "w").write(str(result))
+            assert(os.path.exists(tex_file))
 
-        log.debug("Moving PDF file to the output directory...")
-        self._check_path(output_path)
-        os.rename(tmp_pdf_file, pdf_file)
-        assert(os.path.exists(pdf_file))
+            log.debug("Creating PDF invoice...")
+            if subprocess.call((self.tex_program, "{}.tex".format(invoice._name)), cwd=tmp_path) != 0:
+                raise GenerationError("PDF generation failed.")
+            assert(os.path.exists(tmp_pdf_file))
+
+            log.debug("Moving PDF file to the output directory...")
+            self._check_path(output_path)
+            os.rename(tmp_pdf_file, pdf_file)
+            assert(os.path.exists(pdf_file))
+        else:
+            log.info("PDF file is up to date.")
 
         log.debug("Running PDF viewer...")
         subprocess.call((self.pdf_program, pdf_file))
