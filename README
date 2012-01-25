@@ -48,14 +48,16 @@ Manage companies:
 
 invoice new-company <id>
 invoice edit-company <id>
+invoice show-company <id>
 invoice delete-company <id>
 
 Manage invoices:
 
 invoice new <company-id>
 invoice edit [<number>]
+invoice show [<number>]
 invoice delete [<number>]
 
 Generate and display invoice PDF:
 
-invoice show --generate [<number>]
+invoice pdf --generate [<number>]

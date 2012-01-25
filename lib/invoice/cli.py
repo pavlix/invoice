@@ -49,19 +49,21 @@ class Application:
             help="additional help")
 
         for list_ in "invoices", "companies":
-            for action in "list", "new", "edit", "show", "delete":
+            for action in "list", "new", "edit", "show", "pdf", "delete":
+                if action == "pdf" and list_ != "invoices":
+                    continue
                 suffix = ''
                 if list_ == "companies":
                     suffix = "-companies" if action=="list" else "-company"
                 method = getattr(self, "do_"+(action+suffix).replace("-", "_"))
                 subparser = subparsers.add_parser(action+suffix, help=method.__doc__)
-                if method == self.do_show:
+                if method == self.do_pdf:
                     subparser.add_argument("--generate", "-g", action="store_true")
                 if action == "delete":
                     subparser.add_argument("--force", "-f", action="store_true")
                 if action == "new":
                     subparser.add_argument("name" if suffix else "company_name")
-                if action in ("show", "edit", "delete"):
+                if action in ("show", "pdf", "edit", "delete"):
                     subparser.add_argument("selector", nargs="?")
                 subparser.set_defaults(method=method)
 
@@ -108,9 +110,18 @@ class Application:
         assert os.path.exists(path)
         subprocess.call((self.editor, path))
 
-    def do_show(self, selector, generate):
+    def do_show(self, selector):
+        """View invoice in external viewer.
+
+        The external viewer is determined by PAGER environment variable
+        using 'less' as the default.
+        """
+        item = self.db.invoices[selector]
+        self._show(item._path)
+
+    def do_pdf(self, selector, generate):
         """Generate and view a PDF invoice.
-        
+
         This requires Tempita 0.5.
         """
         import tempita
@@ -198,7 +209,7 @@ class Application:
         self._edit(item._path)
 
     def do_show_company(self, selector):
-        """View company in external editor.
+        """View company in external viewer.
 
         The external viewer is determined by PAGER environment variable
         using 'less' as the default.
