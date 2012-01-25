@@ -16,7 +16,7 @@ may adopt a BSD-like license.
 == Requirements
 
  * Python 3.2
- * python3-templite 0.5.1
+ * python3-tempita 0.5.1
  * pdflatex
 
 == Installation
