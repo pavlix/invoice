@@ -19,6 +19,8 @@ class Application:
 
     def __init__(self, template_path):
         self._parse_args()
+        exec(open(os.path.expanduser(os.path.join(self.args.user_data, "config"))).read(),
+            {"__builtins__": None}, self.__dict__)
         self.year = self.args.__dict__.pop("year")
         self.user_path = os.path.expanduser(self.args.__dict__.pop("user_data"))
         self.method = self.args.__dict__.pop("method")
