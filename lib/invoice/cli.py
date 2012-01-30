@@ -99,11 +99,7 @@ class Application:
         The external editor is determined by EDITOR environment variable
         using 'vim' as the default. Item is edited in-place.
         """
-        if selector:
-            item = self.db.invoices[selector]
-        else:
-            item = self.db.invoices.last()
-        self._edit(item._path)
+        self._edit(self.db.invoices[selector]._path)
 
     def _edit(self, path):
         log.debug("Editing file: {}".format(path))
@@ -125,10 +121,7 @@ class Application:
         This requires Tempita 0.5.
         """
         import tempita
-        if selector:
-            invoice = self.db.invoices[selector]
-        else:
-            invoice = self.db.invoices.last()
+        invoice = self.db.invoices[selector]
 
         tmp_path = self.tmp_path.format(year=self.year)
         output_path = self.output_path.format(year=self.year)

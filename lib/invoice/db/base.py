@@ -54,7 +54,7 @@ class List:
         return bool(self._select(selector))
 
     def __getitem__(self, selector):
-        items = self._select(selector)
+        items = self.select(selector)
         assert(len(items) < 2)
         if not items:
             raise ItemNotFoundError("{} '{}' not found.".format(self._item_class().__name__, selector))
@@ -63,20 +63,32 @@ class List:
         return item
 
     def select(self, selector=None):
-        return sorted(self._select(selector))
+        """Select items by multiple attributes specified in a selector dict.
+
+        Non-dict selectors can be specialcased. See _select docs to
+        find out built-in special cases.
+        """
+        if selector is not None:
+            return sorted(self._select(selector))
+        else:
+            return [self.last()]
 
     def _select(self, selector):
-        """Return a list of items matching 'name', 'number' or other attributes."""
-        if selector == None:
-            selector = {}
+        """Return a list of items matching 'name', 'number' or other attributes.
+
+        This function specialcases string and int. Other specializations
+        can be done in subclasses that should call super()._select() with
+        a dict, str or int argument.
+        """
         if isinstance(selector, str):
             selector = {"name": selector}
-        if isinstance(selector, int):
+        elif isinstance(selector, int):
             selector = {"number": selector}
         log.debug("Selecting: {}".format(selector))
         assert isinstance(selector, dict)
-        return [item for item in self if all(getattr(item, key) == selector[key] for key in selector)]
-        
+        return [item for item in self
+            if all(getattr(item, key) == selector[key] for key in selector)]
+
     def new(self, name):
         """Create a new item in this list.
         
