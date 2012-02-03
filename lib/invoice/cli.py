@@ -51,8 +51,8 @@ class Application:
             help="additional help")
 
         for list_ in "invoices", "companies":
-            for action in "list", "new", "edit", "show", "pdf", "delete":
-                if action == "pdf" and list_ != "invoices":
+            for action in "list", "summary", "new", "edit", "show", "pdf", "delete":
+                if action in ("pdf", "summary") and list_ != "invoices":
                     continue
                 suffix = ''
                 if list_ == "companies":
@@ -89,6 +89,23 @@ class Application:
         """List invoices."""
         for item in sorted(self.db.invoices):
             print(item)
+
+    def do_summary(self):
+        """Show invoice summary."""
+        total = paid = 0
+        for invoice in sorted(self.db.invoices):
+            data = invoice.data()
+            log.debug(data._data)
+            print("{number:7} {due!s:10} {paid!s:10} {sum:>6} {company_name}"
+                .format(**data._data))
+            total += data.sum
+            if data.paid:
+                paid += data.sum
+
+        print()
+        print("Total: {:6}".format(total))
+        print("Paid:  {:6}".format(paid))
+        print("Unpaid: {:6}".format(total-paid))
 
     def do_new(self, company_name):
         """Create and edit a new invoice."""
