@@ -199,7 +199,7 @@ class Data:
         """
     def rename_key(self, oldkey, newkey):
         """Convenience function mainly intended for subclasses."""
-        if not self.__dict__.get(newkey) and oldkey in self._data:
+        if not self._data.get(newkey) and oldkey in self._data:
             self._data[newkey] = self._data[oldkey]
             del self._data[oldkey]
 
