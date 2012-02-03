@@ -59,10 +59,10 @@ class Invoice(Item):
         self._selector["number"] = int(self.number)
 
 class InvoiceData(Data):
-    _fields = ["payment"]
+    _fields = ["due", "paid", "payment"]
     _multivalue_fields = ["item", "address", "note"]
     _date_regex = re.compile(r"^(\d{4})-?(\d{2})-?(\d{2})$")
-    _item_regex = re.compile(r"^(\d+)[:;]\s*(.*)$")
+    _item_regex = re.compile(r"^(-?\d+)[:;]\s*(.*)$")
     _number_template = "{year}{number:03}"
 
     def _parse_date(self, date):

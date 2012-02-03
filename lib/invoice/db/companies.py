@@ -20,7 +20,7 @@ class Companies(List):
     _directory = "companies"
     _regex = re.compile("^(?P<name>[a-z0-9-]+)$")
     _template = "{name}"
-    _data_template = """\
+    data_template = """\
 Name:
 Address:
 Address:
