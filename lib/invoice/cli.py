@@ -3,10 +3,11 @@
 from __future__ import print_function
 
 import os, sys, argparse, datetime, subprocess
-import invoice.db
-
 import logging
+logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
+
+import invoice.db
 
 class SanityCheckError(Exception):
     pass
