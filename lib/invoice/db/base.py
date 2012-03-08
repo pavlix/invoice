@@ -17,7 +17,7 @@ class ItemNameCheckError(DatabaseError, ValueError):
 class ItemExistsError(DatabaseError):
     pass
 
-class List:
+class List(object):
     """Base class for database lists.
     
     This class provides a real-time view to a file-based database. It can be
@@ -29,7 +29,7 @@ class List:
         self._path = os.path.expanduser(data_path.format(
             year=year, directory=self._directory))
         self._db = db
-        log.debug("{}: {}".format(self.__class__.__name__, self._path))
+        log.debug("{0}: {1}".format(self.__class__.__name__, self._path))
 
     def _item_class(self):
         """Returns class object used to instantiate items.
@@ -57,9 +57,9 @@ class List:
         items = self.select(selector)
         assert(len(items) < 2)
         if not items:
-            raise ItemNotFoundError("{} '{}' not found.".format(self._item_class().__name__, selector))
+            raise ItemNotFoundError("{0} '{1}' not found.".format(self._item_class().__name__, selector))
         item = items[0]
-        log.debug("Found matching item: {}".format(item))
+        log.debug("Found matching item: {0}".format(item))
         return item
 
     def select(self, selector=None):
@@ -84,7 +84,7 @@ class List:
             selector = {"name": selector}
         elif isinstance(selector, int):
             selector = {"number": selector}
-        log.debug("Selecting: {}".format(selector))
+        log.debug("Selecting: {0}".format(selector))
         assert isinstance(selector, dict)
         return [item for item in self
             if all(getattr(item, key) == selector[key] for key in selector)]
@@ -98,21 +98,21 @@ class List:
         
         Returns
         """
-        log.info("Creating {}: {}".format(self._item_name(), name))
+        log.info("Creating {0}: {1}".format(self._item_name(), name))
         if not self._regex.match(name):
-            raise ItemNameCheckError("Name {} doesn't match {} regex.".format(name, self._item_name()))
+            raise ItemNameCheckError("Name {0} doesn't match {1} regex.".format(name, self._item_name()))
         if name in self:
-            raise ItemExistsError("Item {} of type {} already exists.".format(name, self._item_name()))
+            raise ItemExistsError("Item {0} of type {1} already exists.".format(name, self._item_name()))
         self._new(os.path.join(self._path, name))
         return self[name]
 
     def _new(self, path):
-        log.debug("Creating {} file: {}".format(self._item_name(), path))
+        log.debug("Creating {0} file: {1}".format(self._item_name(), path))
         stream = os.fdopen(os.open(path, os.O_WRONLY|os.O_EXCL|os.O_CREAT, 0o644), "w")
         stream.write(self.data_template)
         stream.close()
 
-class Item:
+class Item(object):
     """Base class for database list items."""
     def __init__(self, list_, **selector):
         self._list = list_
@@ -120,7 +120,7 @@ class Item:
         self._postprocess()
         self._name = self._list._template.format(**selector)
         self._path = os.path.join(list_._path, self._name)
-        log.debug("{!r}".format(self))
+        log.debug("{0!r}".format(self))
 
     def _postprocess(self):
         """Postprocess the _selector attribute.
@@ -132,7 +132,7 @@ class Item:
         return self._name < other._name
 
     def __repr__(self):
-        return "{}({!r}, **{})".format(self.__class__.__name__, self._name, self._selector)
+        return "{0}({1!r}, **{2})".format(self.__class__.__name__, self._name, self._selector)
 
     def __str__(self):
         return self._name
@@ -141,10 +141,10 @@ class Item:
         return self._selector[key]
 
     def delete(self):
-        log.info("Deleting: {}".format(self))
+        log.info("Deleting: {0}".format(self))
         path = self._path
         newpath = path + "~"
-        log.debug("Renaming file {} to {}.".format(path, newpath))
+        log.debug("Renaming file {0} to {1}.".format(path, newpath))
         assert os.path.exists(path)
         os.rename(path, newpath)
 
@@ -158,7 +158,7 @@ class Item:
     def _data_class(self):
         return Data
 
-class Data:
+class Data(object):
     """Base class for database list item data objects."""
     _fields = []
     _multivalue_fields = []
@@ -181,7 +181,7 @@ class Data:
         for n, line in enumerate(stream):
             match = self._line_regex.match(line)
             if not match:
-                log.warning("Ignoring {}:{}: {}".format(n, self._item._name, line))
+                log.warning("Ignoring {0}:{1}: {2}".format(n, self._item._name, line))
                 continue
             key, value = match.groups()
             key = key.lower().replace("-", "_")
@@ -190,7 +190,7 @@ class Data:
             elif key in self._multivalue_fields:
                 self._data[key].append(value)
             else:
-                log.warning("Key ignored: {}".format(key))
+                log.warning("Key ignored: {0}".format(key))
 
     def _postprocess(self):
         """Postprocess item data.

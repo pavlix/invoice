@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# encoding: utf-8
+from __future__ import print_function
 
 import os, sys, argparse, datetime, subprocess
 import invoice.db
@@ -71,17 +73,17 @@ class Application:
 
         self.args = parser.parse_args()
         log.setLevel(self.args.__dict__.pop("log_level"))
-        log.debug("Arguments: {}".format(self.args))
+        log.debug("Arguments: {0}".format(self.args))
 
     def run(self):
         try:
             self.method(**vars(self.args))
         except (SanityCheckError) as error:
-            print("Error: {} Use '--force' to suppress this check.".format(error), file=sys.stderr)
+            print("Error: {0} Use '--force' to suppress this check.".format(error), file=sys.stderr)
             if log.isEnabledFor(logging.DEBUG):
                 raise
         except invoice.db.DatabaseError as error:
-            print("Error: {}".format(error), file=sys.stderr)
+            print("Error: {0}".format(error), file=sys.stderr)
             if log.isEnabledFor(logging.DEBUG):
                 raise
 
@@ -121,7 +123,7 @@ class Application:
         self._edit(self.db.invoices[selector]._path)
 
     def _edit(self, path):
-        log.debug("Editing file: {}".format(path))
+        log.debug("Editing file: {0}".format(path))
         assert os.path.exists(path)
         subprocess.call((self.editor, path))
 
@@ -144,12 +146,12 @@ class Application:
 
         tmp_path = self.tmp_path.format(year=self.year)
         output_path = self.output_path.format(year=self.year)
-        log.debug("tmp_path={}".format(tmp_path))
+        log.debug("tmp_path={0}".format(tmp_path))
 
         tex_template = os.path.join(self.template_path, "invoice.tex")
-        tex_file = os.path.join(tmp_path, "{}.tex".format(invoice._name))
-        tmp_pdf_file = os.path.join(tmp_path, "{}.pdf".format(invoice._name))
-        pdf_file = os.path.join(output_path, "{}.pdf".format(invoice._name))
+        tex_file = os.path.join(tmp_path, "{0}.tex".format(invoice._name))
+        tmp_pdf_file = os.path.join(tmp_path, "{0}.pdf".format(invoice._name))
+        pdf_file = os.path.join(output_path, "{0}.pdf".format(invoice._name))
 
         if generate:
             #if(not os.path.exists(pdf_file) or
@@ -161,9 +163,9 @@ class Application:
             issuer_data = issuer.data()
             customer_data = customer.data()
 
-            log.debug("Invoice: {}".format(invoice_data._data))
-            log.debug("Issuer: {}".format(issuer_data._data))
-            log.debug("Customer: {}".format(customer_data._data))
+            log.debug("Invoice: {0}".format(invoice_data._data))
+            log.debug("Issuer: {0}".format(issuer_data._data))
+            log.debug("Customer: {0}".format(customer_data._data))
 
             log.debug("Creating TeX invoice...")
             self._check_path(self.tmp_path)
@@ -173,7 +175,7 @@ class Application:
             assert(os.path.exists(tex_file))
 
             log.debug("Creating PDF invoice...")
-            if subprocess.call((self.tex_program, "{}.tex".format(invoice._name)), cwd=tmp_path) != 0:
+            if subprocess.call((self.tex_program, "{0}.tex".format(invoice._name)), cwd=tmp_path) != 0:
                 raise GenerationError("PDF generation failed.")
             assert(os.path.exists(tmp_pdf_file))
 
@@ -187,7 +189,7 @@ class Application:
 
     def _check_path(self, path):
         if not os.path.exists(path):
-            raise LookupError("Directory doesn't exist: {}".format(path))
+            raise LookupError("Directory doesn't exist: {0}".format(path))
 
     def do_delete(self, selector, force):
         """List invoices."""
@@ -228,7 +230,7 @@ class Application:
         self._show(item._path)
 
     def _show(self, path):
-        log.debug("Viewing file: {}".format(path))
+        log.debug("Viewing file: {0}".format(path))
         assert os.path.exists(path)
         subprocess.call((self.viewer, path))
 
@@ -239,6 +241,6 @@ class Application:
             invoices = self.db.invoices.select({"company_name": company._name})
             if invoices:
                 for invoice in invoices:
-                    log.info("Dependent invoice: {}".format(invoice))
+                    log.info("Dependent invoice: {0}".format(invoice))
                 raise SanityCheckError("This company is used by some invoices. You should not delete it.")
         company.delete()
