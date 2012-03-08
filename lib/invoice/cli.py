@@ -105,9 +105,9 @@ class Application:
                 paid += data.sum
 
         print()
-        print("Total: {:6}".format(total))
-        print("Paid:  {:6}".format(paid))
-        print("Unpaid: {:6}".format(total-paid))
+        print("Total: {0:6}".format(total))
+        print("Paid:  {0:6}".format(paid))
+        print("Unpaid: {0:6}".format(total-paid))
 
     def do_new(self, company_name):
         """Create and edit a new invoice."""
