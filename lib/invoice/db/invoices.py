@@ -97,7 +97,7 @@ class InvoiceData(Data):
 
     def _postprocess_dates(self):
         date = self._parse_date(self._item.date)
-        if "due" in self._data:
+        if self.due:
             try:
                 due = self._parse_date(self.due)
             except ValueError:
