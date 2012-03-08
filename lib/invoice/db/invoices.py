@@ -66,7 +66,7 @@ class InvoiceData(Data):
     _number_template = "{year}{number:03}"
 
     def _parse_date(self, date):
-        match = self._date_regex.match(self.date)
+        match = self._date_regex.match(date)
         if not match:
             raise ValueError("Bad date format: {}".format(date))
 	log.debug("Date match: {0}".format(match.groups()))
