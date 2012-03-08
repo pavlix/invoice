@@ -69,6 +69,7 @@ class InvoiceData(Data):
         match = self._date_regex.match(self.date)
         if not match:
             raise ValueError("Bad date format: {}".format(date))
+	log.debug("Date match: {0}".format(match.groups()))
         return datetime.date(*(int(f) for f in match.groups()))
 
     def _postprocess(self):
@@ -107,6 +108,7 @@ class InvoiceData(Data):
                     raise ValueError("Bad due format: {}".format(self.due))
         else:
             due = datetime.timedelta(14)
+	log.debug("Due: {0}".format(due))
         if isinstance(due, datetime.timedelta):
             due += date
         self._data["date"] = date
