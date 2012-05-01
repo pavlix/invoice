@@ -37,12 +37,12 @@ Item:
                 try:
                     selector = int(selector)
                 except TypeError:
-                    raise ItemNotFoundError("Item not found: {}".format(selector))
+                    raise ItemNotFoundError("Item not found: {0}".format(selector))
         return super(Invoices, self)._select(selector)
 
     def new(self, company_name):
         if company_name not in self._db.companies:
-            raise ItemNotFoundError("Company '{}' not found.".format(company_name))
+            raise ItemNotFoundError("Company '{0}' not found.".format(company_name))
         try:
             number = max(item.number for item in self) + 1
         except ValueError:
@@ -68,7 +68,7 @@ class InvoiceData(Data):
     def _parse_date(self, date):
         match = self._date_regex.match(date)
         if not match:
-            raise ValueError("Bad date format: {}".format(date))
+            raise ValueError("Bad date format: {0}".format(date))
         log.debug("Date match: {0}".format(match.groups()))
         return datetime.date(*(int(f) for f in match.groups()))
 
@@ -89,7 +89,7 @@ class InvoiceData(Data):
         for item in self.item:
             match = self._item_regex.match(item)
             if not match:
-                raise ValueError("Bad item format: {}".format(item))
+                raise ValueError("Bad item format: {0}".format(item))
             price, description = match.groups()
             items.append((description, int(price)))
         del self._data["item"]
@@ -103,9 +103,9 @@ class InvoiceData(Data):
                 due = self._parse_date(self.due)
             except ValueError:
                 try:
-                    due = datetime.timedelta(int(re.sub("^+", "", self.due)))
+                    due = datetime.timedelta(int(re.sub("^\+", "", self.due)))
                 except ValueError:
-                    raise ValueError("Bad due format: {}".format(self.due))
+                    raise ValueError("Bad due format: {0}".format(self.due))
         else:
             due = datetime.timedelta(14)
         log.debug("Due: {0}".format(due))
