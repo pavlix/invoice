@@ -54,8 +54,8 @@ class Application:
             help="additional help")
 
         for list_ in "invoices", "companies":
-            for action in "list", "summary", "new", "edit", "show", "pdf", "delete":
-                if action in ("pdf", "summary") and list_ != "invoices":
+            for action in "list", "summary", "new", "edit", "paid", "show", "pdf", "delete":
+                if action in ("pdf", "paid", "summary") and list_ != "invoices":
                     continue
                 suffix = ''
                 if list_ == "companies":
@@ -68,8 +68,10 @@ class Application:
                     subparser.add_argument("--force", "-f", action="store_true")
                 if action == "new":
                     subparser.add_argument("name" if suffix else "company_name")
-                if action in ("show", "pdf", "edit", "delete"):
+                if action in ("show", "pdf", "edit", "paid", "delete"):
                     subparser.add_argument("selector", nargs="?")
+                if action == "paid":
+                    subparser.add_argument("date")
                 subparser.set_defaults(method=method)
 
         self.args = parser.parse_args()
@@ -122,6 +124,12 @@ class Application:
         using 'vim' as the default. Item is edited in-place.
         """
         self._edit(self.db.invoices[selector]._path)
+
+    def do_paid(self, selector, date):
+        path = self.db.invoices[selector]._path
+        with open(path, "a") as stream:
+            stream.write("Paid: {0}\n".format(date))
+        self._show(path)
 
     def _edit(self, path):
         log.debug("Editing file: {0}".format(path))
@@ -228,11 +236,13 @@ class Application:
         using 'less' as the default.
         """
         item = self.db.companies[selector]
+        print("# {0}".format(item._name))
         self._show(item._path)
 
     def _show(self, path):
         log.debug("Viewing file: {0}".format(path))
         assert os.path.exists(path)
+        print("# {0}".format(path))
         subprocess.call((self.viewer, path))
 
     def do_delete_company(self, selector, force):
