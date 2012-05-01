@@ -101,7 +101,7 @@ class Application:
         for invoice in sorted(self.db.invoices):
             data = invoice.data()
             log.debug(data._data)
-            print("{number:7} {due!s:10} {paid!s:10} {sum:>6} {company_name}"
+            print("{number:7} {date!s:10} {due!s:10} {paid!s:10} {sum:>6} {company_name}"
                 .format(**data._data))
             total += data.sum
             if data.paid:
