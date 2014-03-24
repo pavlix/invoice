@@ -163,6 +163,7 @@ class Data(object):
     _fields = []
     _multivalue_fields = []
     _line_regex = re.compile(r"^([A-Z][a-zA-Z-]*):\s+(.*?)\s+$")
+    _comment_regex = re.compile(r"^\s*#")
 
     def __init__(self, item):
         self._item = item
@@ -179,6 +180,8 @@ class Data(object):
         for f in self._multivalue_fields:
             self._data[f] = []
         for n, line in enumerate(stream):
+            if self._comment_regex.match(line):
+                continue
             match = self._line_regex.match(line)
             if not match:
                 log.warning("Ignoring {0}:{1}: {2}".format(n, self._item._name, line))
