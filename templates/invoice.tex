@@ -5,6 +5,7 @@
 %\usepackage[czech]{babel}
 \usepackage{a4wide}
 \usepackage{tabularx}
+\usepackage{graphicx}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\extrarowheight}{3pt}
 
@@ -75,9 +76,11 @@ a2 += (len(a1)-len(a2))*[""]
 & & & \\
 \hline
 & & & \\
-\large\bf Celkem k úhradě: & & & \multicolumn{1}{r|}{\large\bf {{invoice.sum}} Kč} \\
+\multicolumn{3}{|l}{\large\bf Celkem k úhradě:} & \multicolumn{1}{r|}{\large\bf {{invoice.sum}} Kč} \\
 & & & \\
 \hline
+\multicolumn{4}{r}{} \\
+\multicolumn{4}{r}{\includegraphics[scale=1]{../signature.png}\hspace{.4cm} } \\
 \end{tabularx}
 \end{center}
 
