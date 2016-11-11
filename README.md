@@ -1,4 +1,4 @@
-= Invoice
+# Invoice
 
 This is my quick and dirty invoice system I am going to use for my invoices
 in year 2012.
@@ -6,23 +6,23 @@ in year 2012.
 The program is higly experimental and users are expected to know at least a
 bit of Python coding. Feedback is appreciated.
 
-Pavel Šimerda <pavlix@pavlix.net>
+Pavel Šimerda
 
-== License
+## License
 
 This version of the source code is released into public domain, future releases
 may adopt a BSD-like license.
 
-== Requirements
+## Requirements
 
  * Python 3.2
  * python3-tempita 0.5.1
  * pdflatex
 
-== Installation
+## Installation
 
 You don't need to install, just make a symlink to the invoice script
-in ~/bin or /usr/bin/local.
+in `~/bin` or `/usr/bin/local`.
 
 You will need to make the following symlinks or directories in ~/.invoice/
 
@@ -35,13 +35,13 @@ You will need to make the following symlinks or directories in ~/.invoice/
 Use the code or error messages in case this list is incomplete. Use -D for
 debugging.
 
-== User configuration
+## User configuration
 
-For now an empthy ~/.invoice/config should do.
+For now an empthy `~/.invoice/config` should do.
 
-== Basic usage
+## Basic usage
 
-Export EDITOR and PDF_VIEWER environment variables to choose your favourite
+Export `EDITOR` and `PDF_VIEWER` environment variables to choose your favourite
 text editor and PDF viewer. Defaults are 'vim' and 'xdg-open'.
 
 Manage companies:
