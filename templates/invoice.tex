@@ -3,7 +3,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 %\usepackage[czech]{babel}
-\usepackage{a4wide}
+\usepackage{geometry}
 \usepackage{tabularx}
 \usepackage{graphicx}
 \renewcommand{\familydefault}{\sfdefault}
@@ -70,13 +70,13 @@ a2 += (len(a1)-len(a2))*[""]
 \bf Fakturujeme vám: & & & \\[1em]
 
 {{for item in invoice.items}}
-\multicolumn{4}{|l|}{\normalsize {{item[0]}} \hfill {{item[1]}} Kč} \\
+\multicolumn{4}{|l|}{\normalsize {{item[0]}} \hfill {{"{:,}".format(item[1]).replace(",", " ")}} Kč} \\
 {{endfor}}
 
 & & & \\
 \hline
 & & & \\
-\multicolumn{3}{|l}{\large\bf Celkem k úhradě:} & \multicolumn{1}{r|}{\large\bf {{invoice.sum}} Kč} \\
+\multicolumn{3}{|l}{\large\bf Celkem k úhradě:} & \multicolumn{1}{r|}{\large\bf {{"{:,}".format(invoice.sum).replace(",", " ")}} Kč} \\
 & & & \\
 \hline
 \multicolumn{4}{r}{} \\
